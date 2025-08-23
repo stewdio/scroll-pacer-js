@@ -1,0 +1,30 @@
+{
+  "name": "scroll-pacer-js",
+  "version": "1.0.0",
+  "description": "Scrolling you from A to B since 2025.",
+  "keywords": [
+    "animation",
+    "scroll",
+    "keyframe",
+    "tween",
+    "shoes"
+  ],
+  "homepage": "https://github.com/stewdio/scroll-pacer-js#readme",
+  "bugs": {
+    "url": "https://github.com/stewdio/scroll-pacer-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stewdio/scroll-pacer-js.git"
+  },
+  "license": "MIT",
+  "author": "Stewart Smith",
+  "type": "module",
+  "main": "ScrollPacer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "pacer-js": "^1.0.1"
+  }
+}
