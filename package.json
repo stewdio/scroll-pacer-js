@@ -1,6 +1,6 @@
 {
   "name": "scroll-pacer-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Scrolling you from A to B since 2025.",
   "keywords": [
     "animation",
@@ -25,6 +25,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "pacer-js": "^1.0.1"
+    "pacer-js": "^1.0.3"
   }
 }

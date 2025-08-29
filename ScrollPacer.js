@@ -1,5 +1,6 @@
+//  Copyright ©️ 2025 Stewart Smith. See LICENSE for details.
 
-//  ScrollPacer.js is ©️ Stewart Smith, 2025. All Rights Reserved.
+
 
 
 import {
@@ -18,31 +19,51 @@ class ScrollPacer extends Pacer {
 	
 	constructor( 
 		
-		el,
+		watchedEl,
 		params,
 		label ){
 
 
 		//  Let’s process those primary input arguments.
 
-		if( typeof el === 'string' ) el = document.getElementById( el )
-		if( el instanceof HTMLElement !== true ) el = document.body
-		if( typeof params !== 'object' ) params = {}
+		if( typeof watchedEl === 'string' ) watchedEl = document.getElementById( watchedEl )
+		if( watchedEl instanceof Element !== true ) watchedEl = document.body
 		super( label )
-		this.el = el
+		this.watchedEl = watchedEl
+
+		if( typeof params !== 'object' ) params = {}
+		if( typeof params.targetEl === 'undefined' ){
+
+			params.targetEl = watchedEl
+		}
+		if( typeof params.targetEl === 'string' ) params.targetEl = document.getElementById( targetEl )
+		if( params.targetEl instanceof Element !== true ) params.targetEl = document.body.firstChild
+		this.targetEl = params.targetEl
 
 
-		//  n = 0 occurs when the top of our target element
-		//  crosses what viewport boundary? 
+		//  n = 0 occurs when 
+		//  WHICH edge of our target element
+		//  crosses WHICH viewport boundary? 
 
+		this.beginOnElementEdge = 
+			isUsefulString( params.beginOnElementEdge )
+			? params.beginOnElementEdge
+			: 'top'
+		
 		this.beginOnViewportEdge = 
 			isUsefulString( params.beginOnViewportEdge )
 			? params.beginOnViewportEdge
 			: 'bottom'
-		
 
-		//  n = 1 occurs when the bottom of our target element
-		//  crosses what viewport boundary? 
+
+		//  n = 1 occurs when 
+		//  WHICH edge of our target element
+		//  crosses WHICH viewport boundary? 
+
+		this.endOnElementEdge = 
+			isUsefulString( params.endOnElementEdge )
+			? params.endOnElementEdge
+			: 'bottom'
 
 		this.endOnViewportEdge = 
 			isUsefulString( params.endOnViewportEdge )
@@ -77,7 +98,7 @@ class ScrollPacer extends Pacer {
 	}
 	update(){
 
-		const rect = this.el.getBoundingClientRect()
+		const rect = this.watchedEl.getBoundingClientRect()
 
 
 		//  n = 0 occurs when the top edge of our target element
@@ -86,11 +107,11 @@ class ScrollPacer extends Pacer {
 		let beginEdge
 		if( this.beginOnViewportEdge === 'top' ){
 
-			beginEdge = rect.top
+			beginEdge = rect[ this.beginOnElementEdge ]
 		}
 		else if( this.beginOnViewportEdge === 'bottom' ){
 
-			beginEdge = rect.top - window.innerHeight
+			beginEdge = rect[ this.beginOnElementEdge ] - window.innerHeight
 		}
 		
 
@@ -100,11 +121,12 @@ class ScrollPacer extends Pacer {
 		let endEdge
 		if( this.endOnViewportEdge === 'top' ){
 
-			endEdge = rect.bottom
+			endEdge = rect[ this.endOnElementEdge ]
 		}
 		else if( this.endOnViewportEdge === 'bottom' ){
 
-			endEdge = window.innerHeight - rect.bottom
+			// endEdge = window.innerHeight - rect[ this.endOnElementEdge ]
+			endEdge = rect[ this.endOnElementEdge ] - window.innerHeight
 		}
 
 
@@ -133,5 +155,63 @@ class ScrollPacer extends Pacer {
 		)
 		super.update( n )
 	}
+
+
+
+	//   Helpers.
+
+	static makeStickySoftener( 
+		
+		containerEl,
+		targetEl, 
+		softStickyBuffer, 
+		label ){
+
+		if( isNotUsefulNumber( softStickyBuffer )){
+			
+			//  Don’t forget to mirror this value in the CSS: var( --soft-sticky-buffer );
+			softStickyBuffer = 200
+		}
+		targetEl.style.translate = `0 -${ softStickyBuffer }px`
+		function softenerUpdater( e, p ){
+
+			p.targetEl.style.translate = `0 ${ e.y }px`
+		}
+		const p = new ScrollPacer( 
+			
+			containerEl,
+			{
+				targetEl: targetEl,
+				beginOnElementEdge:  'top',
+				beginOnViewportEdge: 'bottom',
+				endOnElementEdge:    'top',
+				endOnViewportEdge:   'top',
+				endOffsetAbsolute:    softStickyBuffer,
+			},
+			label
+		)
+		.abs( 0.0, { y: softStickyBuffer * -1 })
+		.tween( ScrollPacer.quintic.in )
+		.abs( 1.0, { y: 0 })
+		.onEveryKey( softenerUpdater )
+		.onEveryTween( softenerUpdater )
+
+		return p
+	}
+	static videoScrubber( e, p ){
+
+		if( p.targetEl instanceof Element !== true ||
+			isNotUsefulNumber( p.targetEl.duration ) ||
+			isNotUsefulNumber( p.targetEl.currentTime )){
+
+			return
+		}
+		const targetTime = p.targetEl.duration * e.n
+		p.targetEl.currentTime = ''+ targetTime
+	}
 }
+
+
+
+
 export default ScrollPacer
