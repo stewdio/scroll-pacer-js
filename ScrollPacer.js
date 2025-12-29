@@ -12,7 +12,7 @@ import {
 	isUsefulString,
 	normalize
 
-} from 'shoes-js'
+} from 'snacks-js'
 import Pacer from 'pacer-js'
 
 
