@@ -1,5 +1,5 @@
 
-//  Copyright ©️ 2025 Stewart Smith. See LICENSE for details.
+//  Copyright ©️ 2025–2026 Stewart Smith. See LICENSE for details.
 
 
 
@@ -243,9 +243,9 @@ class ScrollPacer extends Pacer {
 
 		n = normalize( 
 			
-			0, 
 			Math.min( beginEdge, endEdge ),
-			Math.max( beginEdge, endEdge )
+			Math.max( beginEdge, endEdge ),
+			0
 		)
 		this.scrollN = n
 		super.update( n )
